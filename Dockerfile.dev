@@ -1,0 +1,21 @@
+FROM ruby
+
+# throw errors if Gemfile has been modified since Gemfile.lock
+RUN bundle config --global frozen 1
+
+WORKDIR /app
+
+COPY Gemfile /app/
+COPY Gemfile.lock /app/
+RUN bundle install
+
+COPY . /app
+
+ENV RACK_ENV development
+ENV PORT 8080
+ENV APP_ROOT /app
+ENV WEB_CONCURRENCY 1
+ENV MIN_THREADS 1
+ENV MAX_THREADS 1
+
+CMD ["bundle", "exec", "puma", "--config", "config/puma.rb"]
